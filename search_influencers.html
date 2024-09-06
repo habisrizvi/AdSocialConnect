@@ -1,0 +1,140 @@
+{% extends "dashboard.html" %} {% block title %} Search Influencers {% endblock
+%} {% block content %}
+<div class="container mt-4">
+  <h2>Search Influencers</h2>
+  <form method="GET" action="{{ url_for('auth.search_influencers') }}">
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        name="name"
+        value="{{ request.args.get('name', '') }}"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="category" class="form-label">Category</label>
+      <input
+        type="text"
+        class="form-control"
+        id="category"
+        name="category"
+        value="{{ request.args.get('category', '') }}"
+      />
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+    <a
+      href="{{ url_for('auth.search_influencers', show_all=True) }}"
+      class="btn btn-secondary"
+      >See All</a
+    >
+  </form>
+
+  {% if request.args.get('name') or request.args.get('category') or
+  request.args.get('show_all') %}
+  <div class="row mt-4">
+    {% if influencers %} {% for influencer in influencers %}
+    <div class="col-md-4">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">{{ influencer.name }}</h5>
+          <p class="card-text">
+            <strong>Category:</strong> {{ influencer.category }}
+          </p>
+          <p class="card-text">
+            <strong>Reach:</strong> {{ influencer.reach }}
+          </p>
+          <p class="card-text"><strong>Bio:</strong> {{ influencer.bio }}</p>
+          <button
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#sendRequestModal-{{ influencer.id }}"
+          >
+            Send Request
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for each influencer -->
+    <div
+      class="modal fade"
+      id="sendRequestModal-{{ influencer.id }}"
+      tabindex="-1"
+      aria-labelledby="sendRequestModalLabel-{{ influencer.id }}"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5
+              class="modal-title"
+              id="sendRequestModalLabel-{{ influencer.id }}"
+            >
+              Send Request
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <form
+            method="POST"
+            action="{{ url_for('auth.send_sponsor_to_ad_request') }}"
+          >
+            <div class="modal-body">
+              <input
+                type="hidden"
+                name="influencer_id"
+                value="{{ influencer.id }}"
+              />
+              <div class="mb-3">
+                <label for="campaign-{{ influencer.id }}" class="form-label"
+                  >Select Campaign</label
+                >
+                <select
+                  class="form-select"
+                  id="campaign-{{ influencer.id }}"
+                  name="campaign_id"
+                >
+                  {% for campaign in campaigns %}
+                  <option value="{{ campaign.id }}">{{ campaign.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="message" class="form-label">Message</label>
+                <textarea
+                  class="form-control"
+                  id="message"
+                  name="message"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %} {% else %}
+    <p>No influencers found.</p>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

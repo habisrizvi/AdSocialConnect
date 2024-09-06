@@ -1,0 +1,205 @@
+{% extends "dashboard.html" %} {% block title %}Manage Users{% endblock %} {%
+block content %}
+<div class="container mt-4">
+  <h2>Manage Users</h2>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.user_type }}</td>
+        <td>
+          {% if user.flagged %}
+          <span class="btn btn-sm btn-danger">Flagged</span>
+          {% else %}
+          <span class="btn btn-sm btn-success">Active</span>
+          {% endif %}
+        </td>
+        <td>
+          <button
+            class="btn btn-sm btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#editUserModal{{ user.id }}"
+          >
+            Edit
+          </button>
+          {% if user.flagged %}
+          <form
+            method="POST"
+            action="{{ url_for('auth.toggle_flag') }}"
+            class="d-inline"
+          >
+            <input type="hidden" name="user_id" value="{{ user.id }}" />
+            <button type="submit" class="btn btn-sm btn-warning">Unflag</button>
+          </form>
+          {% else %}
+          <form
+            method="POST"
+            action="{{ url_for('auth.toggle_flag') }}"
+            class="d-inline"
+          >
+            <input type="hidden" name="user_id" value="{{ user.id }}" />
+            <button type="submit" class="btn btn-sm btn-warning">Flag</button>
+          </form>
+          {% endif %}
+          <a
+            href="#"
+            class="btn btn-sm btn-info"
+            data-toggle="modal"
+            data-target="#userModal{{ user.id }}"
+            >View</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Edit Modal -->
+{% for user in users %}
+<div
+  class="modal fade"
+  id="editUserModal{{ user.id }}"
+  tabindex="-1"
+  aria-labelledby="editUserModalLabel{{ user.id }}"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editUserModalLabel{{ user.id }}">
+          Edit User
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <form method="POST" action="{{ url_for('auth.edit_user') }}">
+        <div class="modal-body">
+          <input type="hidden" name="user_id" value="{{ user.id }}" />
+          <div class="mb-3">
+            <label for="username{{ user.id }}" class="form-label"
+              >Username</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="username{{ user.id }}"
+              name="username"
+              value="{{ user.username }}"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="email{{ user.id }}" class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email{{ user.id }}"
+              name="email"
+              value="{{ user.email }}"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="name{{ user.id }}" class="form-label">Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name{{ user.id }}"
+              name="name"
+              value="{{ user.name }}"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="password{{ user.id }}" class="form-label"
+              >Password</label
+            >
+            <input
+              type="password"
+              class="form-control"
+              id="password{{ user.id }}"
+              name="password"
+            />
+            <small class="form-text text-muted"
+              >Leave blank to keep the current password.</small
+            >
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<!-- View Modal -->
+{% for user in users %}
+<div
+  class="modal fade"
+  id="userModal{{ user.id }}"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="userModalLabel{{ user.id }}"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="userModalLabel{{ user.id }}">
+          {{ user.name }}
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Role:</strong> {{ user.user_type }}</p>
+        <p><strong>Bio:</strong> {{ user.bio }}</p>
+        {% if user.user_type == 'influencer' %}
+        <p><strong>Followers:</strong> {{ user.count }}</p>
+        {% elif user.user_type == 'sponsor' %}
+        <p><strong>Budget:</strong> ${{ user.count }}</p>
+        {% endif %}
+        <p><strong>Industry:</strong> {{ user.category }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %} {% endblock %}

@@ -1,0 +1,195 @@
+{% extends "dashboard.html" %} {% block title %}Search Campaigns{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Search Campaigns</h2>
+
+  <form
+    method="GET"
+    action="{{ url_for('auth.search_campaigns') }}"
+    class="mb-4"
+  >
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label for="name" class="form-label">Search by Name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          name="name"
+          placeholder="Enter campaign name"
+        />
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="category" class="form-label">Search by Category</label>
+        <input
+          type="text"
+          class="form-control"
+          id="category"
+          name="category"
+          placeholder="Enter campaign category"
+        />
+      </div>
+      <div class="col-md-4 mb-3 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary me-2">Search</button>
+        <a
+          href="{{ url_for('auth.search_campaigns') }}"
+          class="btn btn-secondary"
+          >See All</a
+        >
+      </div>
+    </div>
+  </form>
+
+  {% if campaigns %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Campaign Name</th>
+        <th>Sponsor Name</th>
+        <th>Budget</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for campaign in campaigns %}
+      <tr>
+        <td>{{ campaign.name }}</td>
+        <td>{{ campaign.user.p_name }}</td>
+        <td>${{ campaign.budget }}</td>
+        <td>
+          <button
+            type="button"
+            class="btn btn-info"
+            data-bs-toggle="modal"
+            data-bs-target="#campaignModal{{ campaign.id }}"
+          >
+            View
+          </button>
+          <!-- Each form has a hidden input for campaign_id -->
+          <form
+            method="POST"
+            action="{{ url_for('auth.send_influencer_to_campaign_request') }}"
+            class="d-inline"
+          >
+            <input type="hidden" name="campaign_id" value="{{ campaign.id }}" />
+            <button
+              type="button"
+              class="btn btn-info"
+              data-bs-toggle="modal"
+              data-bs-target="#sendRequestModal-{{ campaign.id }}"
+            >
+              Send Request
+            </button>
+          </form>
+        </td>
+      </tr>
+      <div
+        class="modal fade"
+        id="campaignModal{{ campaign.id }}"
+        tabindex="-1"
+        aria-labelledby="campaignModalLabel{{ campaign.id }}"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="campaignModalLabel{{ campaign.id }}">
+                {{ campaign.name }}
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Description:</strong> {{ campaign.description }}</p>
+              <p><strong>Start Date:</strong> {{ campaign.start_date }}</p>
+              <p><strong>End Date:</strong> {{ campaign.end_date }}</p>
+              <p><strong>Budget:</strong> ${{ campaign.budget }}</p>
+              <p><strong>Goals:</strong> {{ campaign.goals }}</p>
+              <p><strong>Category:</strong> {{ campaign.niche }}</p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal for each campaign -->
+      <div
+        class="modal fade"
+        id="sendRequestModal-{{ campaign.id }}"
+        tabindex="-1"
+        aria-labelledby="sendRequestModalLabel-{{ campaign.id }}"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5
+                class="modal-title"
+                id="sendRequestModalLabel-{{ campaign.id }}"
+              >
+                Send Request
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <form
+              method="POST"
+              action="{{ url_for('auth.send_influencer_to_campaign_request') }}"
+            >
+              <div class="modal-body">
+                <input
+                  type="hidden"
+                  name="campaign_id"
+                  value="{{ campaign.id }}"
+                />
+                <div class="mb-3">
+                  <label for="message-{{ campaign.id }}" class="form-label"
+                    >Message</label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="message-{{ campaign.id }}"
+                    name="message"
+                    rows="3"
+                    required
+                  ></textarea>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button type="submit" class="btn btn-primary">Send</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No campaigns found.</p>
+  {% endif %}
+</div>
+{% endblock %}

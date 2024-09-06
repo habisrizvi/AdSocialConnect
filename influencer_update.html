@@ -1,0 +1,79 @@
+{% extends "dashboard.html" %} {% block title %}Update Profile{% endblock %} {%
+block content %}
+<div class="container mt-4">
+  <h2>Update Profile</h2>
+
+  <form method="POST" action="{{ url_for('auth.update_influencer_profile') }}">
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        name="name"
+        value="{{ influencer.name }}"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input
+        type="email"
+        class="form-control"
+        id="email"
+        name="email"
+        value="{{ influencer.email }}"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="category" class="form-label">Category</label>
+      <input
+        type="text"
+        class="form-control"
+        id="category"
+        name="category"
+        value="{{ influencer.category }}"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="niche" class="form-label">Niche</label>
+      <input
+        type="text"
+        class="form-control"
+        id="niche"
+        name="niche"
+        value="{{ influencer.niche }}"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="reach" class="form-label">Reach</label>
+      <input
+        type="number"
+        class="form-control"
+        id="reach"
+        name="reach"
+        value="{{ influencer.reach }}"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label for="platform" class="form-label">Platform</label>
+      <input
+        type="text"
+        class="form-control"
+        id="platform"
+        name="platform"
+        value="{{ influencer.platform }}"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="bio" class="form-label">Bio</label>
+      <textarea class="form-control" id="bio" name="bio" required>
+{{ influencer.bio }}</textarea
+      >
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+  </form>
+</div>
+{% endblock %}

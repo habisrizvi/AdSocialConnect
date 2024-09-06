@@ -1,0 +1,118 @@
+{% extends "base.html" %} {% block title %}Influencer Sign-Up{% endblock %} {%
+block content %}
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Influencer Registration</h1>
+  <form
+    method="POST"
+    action="{{ url_for('auth.sign_up', user_type='influencer') }}"
+  >
+    <div class="form-group">
+      <label for="p_name">Company/Individual Name</label>
+      <input
+        type="text"
+        class="form-control"
+        id="p_name"
+        name="p_name"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="p_email">Email address</label>
+      <input
+        type="email"
+        class="form-control"
+        id="p_email"
+        name="p_email"
+        placeholder="name@xyz.com"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="p_category">Category</label>
+      <input
+        type="text"
+        class="form-control"
+        id="p_category"
+        name="p_category"
+        placeholder="eg: electronics, fashion, food....."
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="p_niche">Niche</label>
+      <input
+        type="text"
+        class="form-control"
+        id="p_niche"
+        name="p_niche"
+        placeholder="eg: eco-friendly....."
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="p_platform">Platform</label>
+      <input
+        type="text"
+        class="form-control"
+        id="p_platform"
+        name="p_platform"
+        placeholder="eg: Youtube, Twitch, Instagram...."
+        required
+      />
+    <div class="form-group">
+      <label for="p_count">Reach</label>
+      <input
+        type="number"
+        class="form-control"
+        id="p_count"
+        name="p_count"
+        required
+        placeholder="Followers in Million"
+      />
+    </div>
+    <div class="form-group">
+      <label for="p_bio">Bio</label>
+      <textarea
+        class="form-control"
+        id="p_bio"
+        name="p_bio"
+        placeholder="A short description about you/your company."
+        required
+      ></textarea>
+    </div>
+    <div class="form-group">
+      <label for="p_username">Username</label>
+      <input
+        type="text"
+        class="form-control"
+        id="p_username"
+        name="p_username"
+        required
+        placeholder="john_doe"
+      />
+    </div>
+    <div class="form-group">
+      <label for="password1">Password</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password1"
+        name="password1"
+        required
+      />
+    </div>
+    <div class="form-group">
+      <label for="password2">Confirm Password</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password2"
+        name="password2"
+        required
+      />
+    </div>
+    <br />
+    <button type="submit" class="btn btn-primary">Sign Up</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">AdSocialConnect</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-3">
+            <a href="{{ url_for('auth.login', user_type='admin') }}" class="btn btn-primary btn-lg btn-block">Admin Login</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{{ url_for('auth.login', user_type='sponsor') }}" class="btn btn-success btn-lg btn-block">Sponsor Login</a>
+        </div>
+        <div class="col-md-4 mb-3">
+            <a href="{{ url_for('auth.login', user_type='influencer') }}" class="btn btn-info btn-lg btn-block">Influencer Login</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

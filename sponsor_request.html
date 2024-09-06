@@ -1,0 +1,62 @@
+{% extends "dashboard.html" %} {% block title %}Sponsor Requests{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Requests</h2>
+  <div class="mb-3">
+    <p>Total Requests: {{ total_requests }}</p>
+  </div>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Influencer Name</th>
+        <th>Campaign Name</th>
+        <th>Message</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for request in requests %}
+      <tr>
+        <td>{{ request.id }}</td>
+        <td>{{ request.influencer.name if request.influencer else 'None'}}</td>
+        <td>{{ request.campaign.name }}</td>
+        <td>{{ request.messages }}</td>
+        <td>
+          {% if request.status == 'pending' %}
+          <span class="badge bg-warning">Pending</span>
+          {% elif request.status == 'accepted' %}
+          <span class="badge bg-success">Accepted</span>
+          {% elif request.status == 'rejected' %}
+          <span class="badge bg-danger">Rejected</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if request.status == 'pending' %}
+          <form
+            method="POST"
+            action="{{ url_for('auth.accept_request') }}"
+            class="d-inline"
+          >
+            <input type="hidden" name="request_id" value="{{ request.id }}" />
+            <button type="submit" class="btn btn-success">Accept</button>
+          </form>
+          <form
+            method="POST"
+            action="{{ url_for('auth.reject_request') }}"
+            class="d-inline"
+          >
+            <input type="hidden" name="request_id" value="{{ request.id }}" />
+            <button type="submit" class="btn btn-danger">Reject</button>
+          </form>
+          {% else %}
+          <span>N/A</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

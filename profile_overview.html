@@ -1,0 +1,222 @@
+{% extends "dashboard.html" %} {% block title %}Profile Overview{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  {% if current_user.user_type == 'sponsor' %}
+  <h2>Profile Overview</h2>
+  <p>Name: {{ current_user.p_name }}</p>
+  <p>Email: {{ current_user.email }}</p>
+  <p>Industry: {{ current_user.p_category }}</p>
+  <p>Budget: ${{ current_user.p_count }}</p>
+  <p>Bio: {{ current_user.p_bio }}</p>
+  <button
+    type="button"
+    class="btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#updateProfileModal"
+  >
+    Update Profile
+  </button>
+
+  <!-- Modal for updating profile -->
+  <div
+    class="modal fade"
+    id="updateProfileModal"
+    tabindex="-1"
+    aria-labelledby="updateProfileModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateProfileModalLabel">
+            Update Profile
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <form method="POST" action="{{ url_for('auth.update_profile') }}">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="p_name" class="form-label">Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="p_name"
+                name="p_name"
+                value="{{ current_user.p_name }}"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                value="{{ current_user.email }}"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="p_category" class="form-label">Industry</label>
+              <input
+                type="text"
+                class="form-control"
+                id="p_category"
+                name="p_category"
+                value="{{ current_user.p_category }}"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="p_count" class="form-label">Budget</label>
+              <input
+                type="number"
+                class="form-control"
+                id="p_count"
+                name="p_count"
+                value="{{ current_user.p_count }}"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="p_bio" class="form-label">Bio</label>
+              <textarea class="form-control" id="p_bio" name="p_bio" required>
+{{ current_user.p_bio }}</textarea
+              >
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% elif current_user.user_type == "influencer" %}
+  <h2>Profile Overview</h2>
+  <p>Name: {{ influencer.name }}</p>
+  <p>Email: {{ influencer.email }}</p>
+  <p>Reach: {{ influencer.reach }}</p>
+  <p>Category: {{ influencer.category }}</p>
+  <p>Niche: {{ influencer.niche }}</p>
+  <p>Bio: {{ influencer.bio }}</p>
+  <br />
+  <h3>Your Campaigns</h3>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Campaign Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for campaign in campaigns %}
+      <tr>
+        <td>{{ campaign.name }}</td>
+        <td>
+          <button
+            type="button"
+            class="btn btn-info"
+            data-bs-toggle="modal"
+            data-bs-target="#campaignModal{{ campaign.id }}"
+          >
+            View
+          </button>
+          <!-- Add more actions if needed -->
+        </td>
+      </tr>
+      <!-- Modal for each campaign -->
+      <div
+        class="modal fade"
+        id="campaignModal{{ campaign.id }}"
+        tabindex="-1"
+        aria-labelledby="campaignModalLabel{{ campaign.id }}"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="campaignModalLabel{{ campaign.id }}">
+                {{ campaign.name }}
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p><strong>Description:</strong> {{ campaign.description }}</p>
+              <p><strong>Start Date:</strong> {{ campaign.start_date }}</p>
+              <p><strong>End Date:</strong> {{ campaign.end_date }}</p>
+              <p><strong>Budget:</strong> ${{ campaign.budget }}</p>
+              <p><strong>Goals:</strong> {{ campaign.goals }}</p>
+              <p><strong>Category:</strong> {{ campaign.niche }}</p>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% elif current_user.user_type == 'admin' %}
+  <!-- Admin Profile Overview -->
+  <h2>Admin Dashboard</h2>
+  <p>Total Influencers: {{ total_influencers }}</p>
+  <p>Total Sponsors: {{ total_sponsors }}</p>
+  <p>Total Users: {{ total_users }}</p>
+  <p>Total Campaigns: {{ total_campaigns }}</p>
+  <p>Total Ad Requests: {{ total_ad_requests }}</p>
+
+  {% if url1 , url2 and url3 %}
+  <h3>Statistics</h3>
+  <div class="row">
+    <div class="col-md-12">
+      <h4>User Distribution</h4>
+      <img
+        src="{{ url_for('static', filename=url1) }}"
+        alt="User Distribution Pie Chart"
+      />
+    </div>
+    <div class="col-md-12">
+      <h4>Campaigns and Requests</h4>
+      <img
+        src="{{ url_for('static', filename=url2) }}"
+        alt="Campaigns and Requests Distribution Pie Chart"
+      />
+    </div>
+    <div class="col-md-12">
+      <h4>Campaigns and Requests</h4>
+      <img
+        src="{{ url_for('static', filename=url3) }}"
+        alt="Campaigns and Requests Distribution Pie Chart"
+      />
+    </div>
+  </div>
+  {% endif %} {% else %}
+  <p>Profile information is not available for your user type.</p>
+  {% endif %}
+</div>
+{% endblock %}

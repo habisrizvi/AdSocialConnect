@@ -1,0 +1,70 @@
+{% extends "dashboard.html" %} {% block title %}Ad Requests{% endblock %} {%
+block content %}
+<div class="container mt-4">
+  <h2>Ad Requests</h2>
+  <p>Total Ad Requests: {{ ad_requests|length }}</p>
+
+  {% if ad_requests %}
+  <div class="row">
+    {% for ad_request in ad_requests %}
+    <div class="col-md-12">
+      <div class="card mb-4">
+        <div class="card-body">
+          <h5 class="card-title">{{ ad_request.campaign.name }}</h5>
+          <p class="card-text">
+            <strong>Requirements:</strong> {{ ad_request.requirements }}
+          </p>
+          <p class="card-text">
+            <strong>Payment Amount:</strong> ${{ ad_request.payment_amount }}
+          </p>
+          <p class="card-text">
+            <strong>Status:</strong> {{ ad_request.status|capitalize }}
+          </p>
+          <div class="d-flex justify-content-end">
+            {% if ad_request.status == 'pending' %}
+            <form
+              method="POST"
+              action="{{ url_for('auth.accept_ad_request') }}"
+            >
+              <input
+                type="hidden"
+                name="ad_request_id"
+                value="{{ ad_request.id }}"
+              />
+              <button type="submit" class="btn btn-success me-2">Accept</button>
+            </form>
+            <form
+              method="POST"
+              action="{{ url_for('auth.reject_ad_request') }}"
+            >
+              <input
+                type="hidden"
+                name="ad_request_id"
+                value="{{ ad_request.id }}"
+              />
+              <button type="submit" class="btn btn-danger">Reject</button>
+            </form>
+            {% elif ad_request.status == 'rejected' %}
+            <form
+              method="POST"
+              action="{{ url_for('auth.delete_ad_request') }}"
+            >
+              <input
+                type="hidden"
+                name="ad_request_id"
+                value="{{ ad_request.id }}"
+              />
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No ad requests available.</p>
+  {% endif %}
+</div>
+{% endblock %}
